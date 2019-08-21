@@ -1,0 +1,63 @@
+body {
+  padding: 1em;
+  font-family: Roboto;
+}
+
+h2 {
+  font-family: Merienda;
+}
+
+.code {
+  background: black;
+  color: #00e600;
+  font-family: monospace;
+  padding: 20px;
+  height: 200px;
+  overflow: scroll;
+}
+
+#uploadButton {
+  margin: 20px;
+}
+
+.cursor {
+  -webkit-animation: fadeanim 1s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+          animation: fadeanim 1s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+}
+
+@-webkit-keyframes fadeanim {
+  0% {
+    opacity: 1;
+  }
+  49% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeanim {
+  0% {
+    opacity: 1;
+  }
+  49% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/*# sourceMappingURL=main.css.map */

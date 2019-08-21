@@ -1,0 +1,47 @@
+body {
+  padding: 1em;
+  font-family: Roboto;
+}
+
+h2 {
+  font-family: Merienda;
+}
+
+.code {
+  background: black;
+  color: lighten(green, 20);
+  font-family: monospace;
+  padding: 20px;
+  height: 200px;
+  overflow: scroll;
+}
+
+#uploadButton {
+  margin: 20px;
+}
+
+.cursor {
+  animation: fadeanim 1s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+}
+
+@keyframes fadeanim {
+  0% {
+    opacity: 1;
+  }
+
+  49% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  99% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

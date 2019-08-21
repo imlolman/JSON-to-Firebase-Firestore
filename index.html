@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JSON to Firebase</title>
+  <link href="https://fonts.googleapis.com/css?family=Merienda|Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/custom/main.css">
+</head>
+
+<body>
+
+  <div style="padding: 4rem 2rem;">
+    <div class=" container">
+      <h2>JSON to Firebase Firestore Tool</h2>
+      <br><br><br>
+      <div class="row">
+        <div class="col-md-6">
+          <div class=""><b>Enter Credentials (Learn How to Use this Tool <a href="https://medium.com/@satyam.gupta756/this-is-how-to-transfer-json-data-to-firebase-firestore-24e912b31eec">Here</a>):</b></div>
+          <textarea id="cred" class="form-control" cols="30" rows="7"></textarea>
+          <div class="invalid-feedback">
+            Please enter correct credentials set. Use <b><a href="https://medium.com/@satyam.gupta756/this-is-how-to-transfer-json-data-to-firebase-firestore-24e912b31eec">This Link</a></b> to Learn How to Use this Tool.<br>
+            <span id="credError"></span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class=""><b>Enter Data in <a data-toggle="modal" style="color: #007bff; cursor: pointer;" data-target="#exampleModal"> This </a> Format:</b></div>
+          <textarea id="data" class="form-control" cols="30" rows="7"></textarea>
+          <div class="invalid-feedback">
+            Please Enter Data in Correct Format.
+            <span id="dataError"></span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center">
+        <button class="btn btn-success" id="uploadButton" onclick="runApp()">Upload Data To Firebase</button><br>
+      </div>
+      <div class="code">
+        <span class="data"></span><span class="cursor">|</span><br><br>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Example JSON Code Data</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <pre>
+    {
+      "collectionName": [
+        {
+          "item1": "item1 value",
+          "item2": "item2 value",
+          "item3": [
+            {
+              "subItem3item": "subItem3item value"
+            }
+          ],
+          "item4": "item4 value"
+        },
+        {
+          "item1": "item1 next value",
+          "item2": "item2 next value",
+          "item3": [
+            {
+              "subItem3item": "subItem3item next value"
+            }
+          ],
+          "item4": "item4 next value"
+        }
+      ]
+    }
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="js/jquery.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+  delay = 100;
+  var db;
+
+  async function connectToFirestore() {
+    try {
+      sendText('Validating Credentials...');
+      var inputval = $('#cred').val();
+      credentials = "";
+      range(8, 17).forEach(e => credentials += inputval.split('\n')[e]);
+      eval(credentials);
+      $('#cred').removeClass('is-invalid');
+      var fb = firebase.initializeApp(firebaseConfig);
+      db = await fb.firestore()
+      sendText('Credentials Verification Successful.')
+      saveData();
+    } catch (e) {
+      sendText('Credentials Verification Failed!!! <hr>')
+      $('#cred').addClass('is-invalid');
+      $('#credError').html(e)
+    }
+  }
+
+  async function saveData() {
+    try {
+      sendText('Parsing Data')
+      data = JSON.parse($('#data').val())
+      cn = Object.keys(data)[0];
+      sendText('Uploading Data Key By Key with a Dealay of ' + delay + ' ms.')
+      node = data[cn];
+      ending = data[cn].length
+      counter = 1;
+      intervel = await setInterval(
+        function () {
+          db.collection(cn).add(node.shift()).then(
+            () => {
+              sendText('Key Written ' + counter)
+              if (counter == ending) {
+                sendText('Upload Successful :)');
+              }
+              counter += 1
+            }
+          )
+          if (node.length == 0) {
+            clearInterval(intervel);
+          }
+        }, delay);
+      return;
+    } catch (e) {
+      sendText('Error in Parsing Or Uploading Data <hr>')
+      $('#data').addClass('is-invalid');
+      $('#dataError').html(e)
+    }
+  }
+
+  async function runApp() {
+    connectToFirestore()
+  }
+</script>
+<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.1.1/firebase-firestore.js"></script>
+
+<script>
+  var isRunning = false;
+  var logs = [];
+
+  function sendText(text) {
+    if (isRunning) {
+      logs.push(text);
+      return;
+    }
+    isRunning = true;
+    textArray = text.split('');
+    var intervel = setInterval(() => {
+      $('.data').append(textArray.shift())
+      if (textArray.length == 0) {
+        $('.data').append('<br>')
+        var elem = document.getElementsByClassName('code')[0];
+        elem.scrollTop = elem.scrollHeight;
+        clearInterval(intervel);
+        isRunning = false;
+        if (logs.length != 0) {
+          sendText(logs.shift())
+        }
+      }
+    }, 10);
+  }
+</script>
+
+</html>
