@@ -100,9 +100,7 @@
     try {
       sendText('Validating Credentials...');
       var inputval = $('#cred').val();
-      credentials = "";
-      range(8, 17).forEach(e => credentials += inputval.split('\n')[e]);
-      eval(credentials);
+      eval(inputval.split('<script>')[1].split('\/\/ Initialize Firebase')[0])
       $('#cred').removeClass('is-invalid');
       var fb = firebase.initializeApp(firebaseConfig);
       db = await fb.firestore()
@@ -145,6 +143,14 @@
       $('#data').addClass('is-invalid');
       $('#dataError').html(e)
     }
+  }
+
+  function range(start, end) {
+    var ans = [];
+    for (let i = start; i <= end; i++) {
+        ans.push(i);
+    }
+    return ans;
   }
 
   async function runApp() {
